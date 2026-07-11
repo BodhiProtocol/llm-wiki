@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Wiki · BodhiProtocol</title>
+<meta name="description" content="24 core LLM concepts — tokens, prompting, RAG, embeddings, agents — decoded into plain language, with a note on why each one matters when building with AI.">
+<meta name="theme-color" content="#14101F">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%2314101F%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 text-anchor=%22middle%22 fill=%22%239D7BEA%22 font-family=%22Georgia,serif%22>L</text></svg>">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LLM Wiki · BodhiProtocol">
+<meta property="og:description" content="24 core LLM concepts — tokens, prompting, RAG, embeddings, agents — decoded into plain language, with a note on why each one matters when building with AI.">
+<meta property="og:url" content="https://bodhiprotocol.github.io/llm-wiki/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LLM Wiki · BodhiProtocol">
+<meta name="twitter:description" content="24 core LLM concepts — tokens, prompting, RAG, embeddings, agents — decoded into plain language, with a note on why each one matters when building with AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14101F;
+  --panel:#201936;
+  --panel-2:#2A2145;
+  --lotus:#9D7BEA;
+  --lavender:#C9B8F5;
+  --gold:#E8B75A;
+  --mist:#EDE9F7;
+  --muted:#8B84A3;
+  --line:rgba(157,123,234,.22);
+  --on-accent:#14101F;
+}
+html.pastel{
+  --ink:#F7F4EF;
+  --panel:#FFFFFF;
+  --panel-2:#EFEAE0;
+  --lotus:#5B7FA6;
+  --lavender:#7B98B8;
+  --gold:#C97F3E;
+  --mist:#3A3630;
+  --muted:#8A8578;
+  --line:rgba(58,54,48,.15);
+  --on-accent:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+body{
+  background:var(--ink);color:var(--mist);
+  font-family:'Inter',system-ui,sans-serif;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px}
+
+header{padding:26px 0 0;display:flex;justify-content:center}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:10;display:flex;gap:0}
+.theme-btn{
+  background:var(--panel);border:1px solid var(--line);
+  color:var(--lavender);font-family:'Inter',sans-serif;font-weight:500;
+  font-size:.76rem;padding:7px 16px;cursor:pointer;transition:all .25s ease;
+}
+.theme-btn:first-child{border-radius:999px 0 0 999px;border-right:none}
+.theme-btn:last-child{border-radius:0 999px 999px 0}
+.theme-btn.active{background:var(--lotus);border-color:var(--lotus);color:var(--on-accent)}
+.theme-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (max-width:640px){
+  .theme-toggle{top:12px;right:12px}
+  .theme-btn{padding:6px 12px;font-size:.7rem}
+}
+.brand{
+  font-family:'IBM Plex Mono',monospace;font-size:.78rem;
+  letter-spacing:.22em;color:var(--muted);text-transform:uppercase;
+}
+.brand b{color:var(--lotus);font-weight:500}
+
+.hero{padding:46px 0 26px;text-align:center}
+.hero h1{
+  font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(2.1rem,5.6vw,3.4rem);line-height:1.1;
+}
+.hero h1 em{font-style:italic;color:var(--lotus)}
+.hero p{margin:14px auto 0;max-width:560px;color:var(--muted);font-size:1rem}
+
+/* decode bar */
+.decode-zone{padding:8px 0 18px}
+.decode-bar{display:flex;gap:10px;max-width:620px;margin:0 auto}
+.decode-bar input{
+  flex:1;background:var(--panel);border:1.5px solid var(--line);
+  border-radius:999px;padding:15px 24px;color:var(--mist);
+  font-family:'Inter',sans-serif;font-size:1rem;outline:none;
+  transition:border-color .25s ease;
+}
+.decode-bar input::placeholder{color:var(--muted)}
+.decode-bar input:focus{border-color:var(--gold)}
+.decode-bar button{
+  background:var(--lotus);border:none;border-radius:999px;
+  padding:0 26px;color:var(--on-accent);font-weight:600;font-size:.92rem;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:background .25s ease;
+  white-space:nowrap;
+}
+.decode-bar button:hover{background:var(--gold)}
+.decode-bar button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.count{
+  text-align:center;margin-top:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+}
+.count b{color:var(--gold);font-weight:500}
+
+/* filter groups */
+.filter-group{padding:16px 0 0}
+.filter-label{
+  text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.64rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;
+}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding-bottom:20px}
+.chip{
+  background:none;border:1px solid var(--line);border-radius:999px;
+  padding:6px 16px;color:var(--lavender);font-size:.8rem;font-weight:500;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .25s ease;
+}
+.chip:hover{border-color:var(--lotus);background:var(--panel)}
+.chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.chip.active{background:var(--lotus);border-color:var(--lotus);color:var(--on-accent)}
+
+/* term cards */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-bottom:40px}
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:16px;padding:22px 24px;
+  transition:border-color .25s ease;
+}
+.card:hover{border-color:var(--lotus)}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.card .cat{
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+}
+.top-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.badge{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--on-accent);background:var(--gold);border-radius:999px;
+  padding:2px 10px;cursor:pointer;border:none;transition:background .25s ease;
+  white-space:nowrap;
+}
+.badge:hover{background:var(--lavender)}
+.badge:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.link-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--lavender);background:none;border:1px solid var(--line);border-radius:999px;
+  padding:1px 9px;cursor:pointer;transition:all .25s ease;
+}
+.link-badge:hover{border-color:var(--lotus)}
+.link-badge:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.link-badge.copied{border-color:var(--gold);color:var(--gold)}
+.card h3{
+  font-family:'IBM Plex Mono',monospace;font-weight:500;
+  font-size:1.05rem;color:var(--mist);margin-bottom:2px;letter-spacing:.02em;
+}
+.card .full{font-size:.78rem;color:var(--muted);margin-bottom:10px}
+.card .plain{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.1rem;color:var(--lavender);line-height:1.45;margin-bottom:10px;
+}
+.card .more{font-size:.86rem;color:var(--muted)}
+.card .why{
+  display:none;margin-top:16px;padding-top:16px;
+  border-top:1px dashed var(--line);font-size:.86rem;color:var(--mist);
+}
+.card .why b{
+  display:block;font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:500;
+}
+.card.open .why{display:block}
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .big{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.4rem;color:var(--lavender);margin-bottom:8px;
+}
+
+footer{border-top:1px solid var(--line);padding:32px 0 44px;text-align:center}
+footer .om{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  color:var(--lavender);font-size:1.02rem;margin-bottom:14px;
+}
+footer .related{
+  font-family:'IBM Plex Mono',monospace;font-size:.68rem;
+  letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;
+}
+footer .related a{color:var(--lotus);text-decoration:none}
+footer .related a:hover{color:var(--gold)}
+footer .meta{
+  font-family:'IBM Plex Mono',monospace;font-size:.72rem;
+  letter-spacing:.16em;color:var(--muted);text-transform:uppercase;
+}
+footer .meta a{color:var(--lotus);text-decoration:none}
+footer .meta a:hover{color:var(--gold)}
+
+@media (max-width:640px){
+  .grid{grid-template-columns:1fr}
+  .decode-bar{flex-direction:column}
+  .decode-bar button{padding:13px 26px}
+  .badge{padding:10px 16px}
+  .chip{padding:10px 16px}
+  footer .related{line-height:2.2}
+}
+</style>
+</head>
+<body>
+
+<div class="theme-toggle" role="group" aria-label="Theme">
+  <button class="theme-btn active" id="themeDark" type="button">Dark</button>
+  <button class="theme-btn" id="themeLight" type="button">Light</button>
+</div>
+
+<header>
+  <div class="brand">Bodhi<b>Protocol</b></div>
+</header>
+
+<section class="hero wrap">
+  <h1>Twenty-four ideas.<br><em>One page.</em></h1>
+  <p>The concepts that come up every time you build with Claude, GPT, or any other LLM — decoded into plain language, with a note on why each one actually matters in practice.</p>
+</section>
+
+<section class="decode-zone wrap">
+  <div class="decode-bar">
+    <input id="q" type="text" placeholder="Search tokens, RAG, embeddings, agents..." aria-label="Search LLM concepts" autocomplete="off">
+    <button id="surprise" type="button">Surprise me</button>
+  </div>
+  <div class="count" id="count"></div>
+</section>
+
+<section class="wrap">
+  <div class="filter-group">
+    <div class="filter-label">Category</div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+  </div>
+  <div class="grid" id="grid" aria-live="polite"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="om">"The limits of my language mean the limits of my world." — Ludwig Wittgenstein</div>
+    <div class="related">Part of the BodhiProtocol toolkit — <a href="https://bodhiprotocol.github.io/jargon-decoder/">Jargon Decoder</a> · <a href="https://bodhiprotocol.github.io/trade-lifecycle-explorer/">Trade Lifecycle Explorer</a> · <a href="https://bodhiprotocol.github.io/capital-markets-blueprint-explorer/">Capital Markets Blueprint Explorer</a></div>
+    <div class="meta">Built by a business analyst who builds · <a href="https://github.com/BodhiProtocol" target="_blank" rel="noopener">github.com/BodhiProtocol</a></div>
+  </div>
+</footer>
+
+<script>
+/* ---------- theme toggle ---------- */
+const THEME_KEY = "llm-wiki-theme";
+const themeDarkBtn = document.getElementById("themeDark");
+const themeLightBtn = document.getElementById("themeLight");
+function applyTheme(theme){
+  document.documentElement.classList.toggle("pastel", theme === "light");
+  themeDarkBtn.classList.toggle("active", theme === "dark");
+  themeLightBtn.classList.toggle("active", theme === "light");
+  localStorage.setItem(THEME_KEY, theme);
+}
+let savedTheme = localStorage.getItem(THEME_KEY) || "dark";
+applyTheme(savedTheme);
+themeDarkBtn.addEventListener("click", () => applyTheme("dark"));
+themeLightBtn.addEventListener("click", () => applyTheme("light"));
+
+const CATS = ["Tokens & Memory","Prompting","Training & Adaptation","Embeddings & Retrieval","Agents & Tools","Behavior & Safety"];
+
+const ITEMS = [
+{t:"Token",full:"The smallest unit an LLM reads",c:0,p:"Not words, not characters — the model reads chunks called tokens; \"Hello, world!\" is already 4 of them.",m:"A token is roughly ¾ of an English word on average, so 100 tokens ≈ 75 words. Every API call is priced per token — input tokens plus output tokens — not per character or per request.",w:"Before you paste a huge document into a prompt, do the token math — it's what actually drives your cost and whether it'll even fit."},
+{t:"Context Window",full:"A model's total working memory, in tokens",c:0,p:"Everything the model can \"see\" at once — your whole conversation, any pasted documents, and its own reply — combined.",m:"Claude 3.5 Sonnet: ~200K tokens. GPT-4o: ~128K tokens. Gemini 1.5 Pro: up to 2M tokens for select tiers. Once a conversation exceeds the window, the oldest content gets pushed out and the model can no longer see it.",w:"Bigger isn't free — larger context costs more, runs slower, and models pay less attention to information buried in the middle of a huge context. A well-designed retrieval step usually beats just dumping everything in."},
+
+{t:"Zero-shot",full:"Asking with no examples",c:1,p:"Just asking the question directly, with no examples given first.",m:"Works fine for simple, well-known tasks the model has clearly seen thousands of times in training.",w:"Your default starting point — only add examples (few-shot) if the output isn't consistent enough."},
+{t:"Few-shot",full:"Asking with a couple of examples first",c:1,p:"Show the model 1–3 examples of the input/output pattern you want, before asking your real question.",m:"Dramatically improves consistency for formatting-sensitive or unusual tasks that zero-shot struggles with.",w:"If output keeps coming back in the wrong shape, add examples before you add more instructions — it's usually the faster fix."},
+{t:"System Prompt",full:"The standing instructions behind a conversation",c:1,p:"An instruction set at the start of a conversation that shapes everything that follows — tone, role, rules, constraints.",m:"Applies persistently across the whole conversation, rather than being repeated in every message.",w:"The single highest-leverage change you can make to any AI workflow — a good system prompt outperforms rewording individual questions one by one."},
+{t:"Chain-of-Thought",full:"Reasoning step-by-step before answering (CoT)",c:1,p:"Asking the model to think through a problem out loud before giving its final answer.",m:"The model effectively \"shows its work,\" which catches its own mistakes on multi-step math, logic, and planning problems.",w:"Combine with a couple of worked examples (few-shot) for the best results on genuinely hard, multi-step tasks."},
+{t:"XML Structuring",full:"Tagging the parts of a long prompt",c:1,p:"Wrapping different parts of a prompt in tags like <instructions>, <context>, <examples> so the model can't confuse one for another.",m:"Anthropic's own documentation specifically recommends this pattern for Claude on complex, multi-part prompts.",w:"Reach for this once a prompt has more than one \"part\" — instructions, reference material, and examples all jumbled together in plain text is where models start blending things up."},
+{t:"Reasoning Effort",full:"How much hidden thinking a model does",c:1,p:"A model setting (low / medium / high) controlling how much step-by-step reasoning happens before it answers.",m:"Has largely replaced temperature-tuning as the go-to lever for accuracy on hard problems in 2026 — higher effort costs more time and tokens but improves logic accuracy.",w:"For a genuinely hard reasoning task, raising the reasoning effort usually helps more than rewording the prompt."},
+{t:"Temperature",full:"How random vs. predictable the output is",c:1,p:"A setting that controls how creative or how consistent a model's answers are.",m:"Low temperature = focused, repeatable answers. High temperature = more varied, creative ones.",w:"Turn it down for factual or extraction tasks, up for brainstorming — but don't expect it to fix a badly-structured prompt."},
+{t:"Top-p",full:"Nucleus sampling — another randomness dial",c:1,p:"A second setting, similar in spirit to temperature, that also controls output variety.",m:"Usually you tune one or the other, not both at once.",w:"Rarely worth touching unless you already understand temperature and still need finer control."},
+
+{t:"Fine-tuning",full:"Retraining a model on your own data",c:2,p:"Continuing to train a pre-trained model on a curated dataset, which actually changes its internal weights.",m:"Best for teaching a specific style, format, or narrow skill — not for teaching new facts, since updating knowledge means retraining.",w:"Reach for this when you need the model to consistently behave a certain way, not when you need it to know today's information."},
+{t:"RAG",full:"Retrieval-Augmented Generation",c:2,p:"Connecting the model to an external data source and pulling in the relevant bits at question-time, instead of baking them into the model.",m:"Doesn't change the model itself — just what it's shown in the prompt. Easy to update: add a document, and it's instantly searchable.",w:"The default choice for anything that changes often or is too large/private to fine-tune into the model — internal docs, live data, your own files."},
+{t:"Alignment",full:"Making a model's behavior match human intent",c:2,p:"The broader effort to make a model helpful, harmless, and honest — not just technically capable.",m:"Encompasses training techniques like RLHF, safety testing, and ongoing research into whether a model's stated reasoning matches its actual behavior.",w:"Explains why a raw, freshly-trained model and a shipped product model can behave very differently even with similar underlying capability."},
+{t:"RLHF",full:"Reinforcement Learning from Human Feedback",c:2,p:"Humans rank a model's responses, and the model is further trained to produce more of the ones they preferred.",m:"A major reason modern LLMs feel helpful and polite rather than just predicting the next word in a raw, unfiltered way.",w:"Explains why the same base model can be tuned toward very different \"personalities\" depending on what feedback it was trained on."},
+
+{t:"Embedding",full:"Meaning, turned into numbers",c:3,p:"Turning a piece of text (or image, or audio) into a long list of numbers that captures its meaning.",m:"Texts with similar meaning end up with similar numbers — even sharing no words in common. \"Budapest\" sits close to \"London\" because both are capital cities.",w:"The machinery underneath every semantic search and RAG system — \"find things like this\" becomes a math problem instead of a keyword match."},
+{t:"Vector Database",full:"A database built for similarity, not exact matches",c:3,p:"A database built specifically to store millions of embeddings and instantly find the ones closest to a new one.",m:"Unlike a normal database (exact matches, like WHERE id=123), it's optimized for similarity search — \"find me the 5 things most like this.\"",w:"The retrieval half of any RAG pipeline: documents get embedded and stored here, then searched at question-time."},
+
+{t:"Agent",full:"A model that takes multiple steps on its own",c:4,p:"An LLM that doesn't just answer once, but calls tools, reads the results, and decides what to do next — looping until a task is done.",m:"The difference between producing a single response and actually completing a multi-step task end-to-end.",w:"The difference between \"chatbot that answers a question\" and \"assistant that completes a task for you\" — like the one that built this wiki."},
+{t:"MCP",full:"Model Context Protocol",c:4,p:"An open standard, introduced by Anthropic in 2024, that lets an AI assistant connect to external tools and data through one common interface.",m:"Described as \"a USB-C port for AI applications\" — build the connector once, and any MCP-compatible AI app can use it, instead of a custom integration per tool.",w:"Reduces hallucination by giving a model a clean way to reach real external data instead of guessing — the same protocol behind the web search and browser tools used to build this wiki."},
+{t:"Inference",full:"Running a trained model to get an answer",c:4,p:"Actually running a trained model to produce a response, as opposed to training it in the first place.",m:"One prompt sent, one answer returned = one inference call — the thing you're billed for and waiting on.",w:"Distinguishes \"the model learning\" (training, expensive, rare) from \"the model answering you\" (inference, what happens every time you chat with it)."},
+{t:"Latency",full:"How long a response takes to come back",c:4,p:"The delay between sending a prompt and getting a response.",m:"Bigger context windows, higher reasoning effort, and larger models all tend to increase it.",w:"A real tradeoff against accuracy — the most \"thorough\" setting isn't always right if a task needs to feel instant."},
+
+{t:"Hallucination",full:"A confident, made-up answer",c:5,p:"When a model states something false with total confidence, because it's generating plausible-sounding text rather than looking anything up.",m:"Not a bug in the traditional sense — it's a side effect of how these models generate text at all.",w:"The core reason retrieval (RAG) and tool use exist: grounding answers in real data instead of the model's memory alone."},
+{t:"Prompt Injection",full:"Hidden instructions hiding in content a model reads",c:5,p:"A security risk where text a model reads — a webpage, a document, a tool result — contains hidden instructions trying to hijack its behavior.",m:"Well-built agents treat all such content as data to reason about, never as commands to obey.",w:"Worth knowing whenever you're feeding a model content from the open web or from users you don't fully trust."},
+{t:"Multimodal",full:"Handling more than just text",c:5,p:"A model that can take in — and sometimes produce — images, audio, or video, not just text.",m:"Lets you hand a model a screenshot or a photo and ask questions about it directly.",w:"Relevant whenever your task involves anything other than plain text in or out."},
+{t:"Parameters",full:"A model's learned internal values",c:5,p:"The internal numeric values a model learns during training — loosely, its \"size\" (e.g. a 70-billion-parameter model).",m:"More parameters generally means more capability, but also more cost and slower responses.",w:"A rough proxy for capability, but not the whole story — training data quality and technique matter just as much."}
+];
+
+/* ---------- decode mode ---------- */
+const grid=document.getElementById("grid");
+const countEl=document.getElementById("count");
+const q=document.getElementById("q");
+const chipsEl=document.getElementById("chips");
+let activeCat=-1;
+
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+
+function render(){
+  const query=q.value.trim().toLowerCase();
+  const list=ITEMS.filter(x=>{
+    const catOk = activeCat===-1 || x.c===activeCat;
+    const qOk = !query || x.t.toLowerCase().includes(query) || x.full.toLowerCase().includes(query) || x.p.toLowerCase().includes(query) || x.m.toLowerCase().includes(query) || x.w.toLowerCase().includes(query);
+    return catOk && qOk;
+  });
+  if(!list.length){
+    grid.innerHTML=`<div class="empty"><div class="big">Not on the page — yet.</div>Try another term, or clear a filter.</div>`;
+  }else{
+    grid.innerHTML=list.map(x=>{
+      return `
+      <div class="card" data-term="${esc(x.t)}">
+        <div class="top">
+          <div class="cat">${CATS[x.c]}</div>
+          <div class="top-actions">
+            <button class="link-badge" type="button" data-term="${esc(x.t)}">copy link</button>
+            <button class="badge" type="button" data-why="${esc(x.t)}">why it matters</button>
+          </div>
+        </div>
+        <h3>${esc(x.t)}</h3>
+        <div class="full">${esc(x.full)}</div>
+        <p class="plain">${esc(x.p)}</p>
+        <p class="more">${esc(x.m)}</p>
+        <div class="why"><b>Why it matters</b>${esc(x.w)}</div>
+      </div>`;
+    }).join("");
+    grid.querySelectorAll(".badge").forEach(b=>{
+      b.addEventListener("click",e=>{
+        e.currentTarget.closest(".card").classList.toggle("open");
+      });
+    });
+    grid.querySelectorAll(".link-badge").forEach(b=>{
+      b.addEventListener("click",e=>{
+        const btn=e.currentTarget;
+        const term=btn.getAttribute("data-term");
+        const url=`${window.location.origin}${window.location.pathname}?term=${encodeURIComponent(term)}`;
+        const showState=(text,cls)=>{
+          const original="copy link";
+          btn.textContent=text;
+          if(cls)btn.classList.add(cls);
+          setTimeout(()=>{btn.textContent=original;btn.classList.remove("copied");},1500);
+        };
+        const fallbackCopy=()=>{
+          const ta=document.createElement("textarea");
+          ta.value=url;ta.style.position="fixed";ta.style.opacity="0";
+          document.body.appendChild(ta);ta.select();
+          try{
+            document.execCommand("copy");
+            showState("copied!","copied");
+          }catch(err){
+            showState("couldn't copy");
+          }
+          document.body.removeChild(ta);
+        };
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url).then(()=>showState("copied!","copied")).catch(fallbackCopy);
+        }else{
+          fallbackCopy();
+        }
+      });
+    });
+  }
+  countEl.innerHTML = `<b>${list.length}</b> of ${ITEMS.length} concepts mapped`;
+}
+
+const allChip=document.createElement("button");
+allChip.className="chip active";allChip.textContent="All";
+allChip.addEventListener("click",()=>{activeCat=-1;setChip(allChip,chipsEl);render();});
+chipsEl.appendChild(allChip);
+CATS.forEach((c,i)=>{
+  const b=document.createElement("button");
+  b.className="chip";b.textContent=c;
+  b.addEventListener("click",()=>{activeCat=i;setChip(b,chipsEl);render();});
+  chipsEl.appendChild(b);
+});
+
+function setChip(el,container){container.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));el.classList.add("active");}
+
+q.addEventListener("input",render);
+document.getElementById("surprise").addEventListener("click",()=>{
+  const t=ITEMS[Math.floor(Math.random()*ITEMS.length)];
+  activeCat=-1;setChip(allChip,chipsEl);
+  q.value=t.t;render();
+  const card=grid.querySelector(`.card[data-term="${CSS.escape(t.t)}"]`);
+  if(card)card.classList.add("open");
+});
+
+render();
+
+/* ---------- deep link: ?term=Embedding ---------- */
+const linkedTerm = new URLSearchParams(window.location.search).get("term");
+if (linkedTerm) {
+  const match = ITEMS.find(x => x.t.toLowerCase() === linkedTerm.toLowerCase());
+  if (match) {
+    q.value = match.t;
+    render();
+    const card = grid.querySelector(`.card[data-term="${CSS.escape(match.t)}"]`);
+    if (card) card.classList.add("open");
+  }
+}
+</script>
+</body>
+</html>
